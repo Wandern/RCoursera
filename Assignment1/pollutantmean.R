@@ -11,7 +11,7 @@ pollutantmean <- function(directory, pollutant, id = 1:332) {
   files_subset <- files_full[id]
   
   ##read the data contained within the requested files into a dataframe vector.
-  dataframe <- lapply(file_subset,read.csv,header=TRUE)
+  dataframe <- lapply(files_subset,read.csv,header=TRUE)
   
   ##Combine the requested file dataframe vector into a single dataframe
   combined_dataframe <- do.call(rbind,dataframe)
@@ -22,15 +22,12 @@ pollutantmean <- function(directory, pollutant, id = 1:332) {
   
   ##Acquire the column requested by the pollutant input (column name)
   pollutant_column <- combined_dataframe[[pollutant]]
-  
-  ##Remove NA's from pollutant column
-  conditioned_pollutant_column <- pollutant_column[!is.na(pollutant_column)]
-  
+
   ##Perform the mean over the pollutant column once NA's are removed.
-  pollutant_mean <- mean(conditioned_pollutant_column)
+  pollutant_mean <- mean(pollutant_column,na.rm=TRUE)
   
   ## Return the mean of the pollutant across all monitors list
   ## in the 'id' vector (ignoring NA values)
-  return(pollutant_mean)
+  return(round(pollutant_mean,3))
 
 }
