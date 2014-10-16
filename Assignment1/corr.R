@@ -14,22 +14,22 @@ corr <- function(directory, threshold = 0) {
   nobs <- complete_table$nobs
   # Acquire the correct Ids.
   ids <- complete_table$id[nobs > threshold]
-  # get the length of ids vector
-  id_len <- length(ids)
-  #init an empty vector of the correct size, to begin adding data into.
-  corr_vector <- rep(0, id_len)
+  #init an empty vector, to begin adding data into.
+  corr_vector <- vector()
   # find all files in the specdata folder
   files_full <- list.files(directory,full.names=TRUE)
-  #file_paths <- paste(directory, all_files, sep="")
   j <- 1
   for(i in ids) {
     #Read data from the current file.
-    current_file <- read.csv(files_full[i], header=T)
-    #Add the correlated values into the corr_vector object.
-    corr_vector[j] <- cor(current_file$sulfate, current_file$nitrate, use="complete.obs")
-    #increment the counter
-    j <- j + 1
+     data<- read.csv(files_full[i], header=T)
+     ## Calculate and store the count of complete cases
+     completeCases <- data[complete.cases(data),]
+     count <- nrow(completeCases)
+     ## Calculate and store the count of complete cases
+     ## if threshhold is reached
+     if( count >= threshold ) {
+       corr_vector <- c(corr_vector, cor(completeCases$nitrate, completeCases$sulfate) )
+     }
   }
-  result <- round(corr_vector,5)
-  return(result)
+  return(corr_vector)
 }
